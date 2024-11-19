@@ -1,25 +1,29 @@
 
 public class Customer {
+    private String id;
     private String name;
-    private String address;
     private String phoneNumber;
-    private String email;
 
-    public Customer(String name, String address, String phoneNumber, String email) {
+    public Customer(String id, String name, String phoneNumber) {
+        this.id = id;
         this.name = name;
-        this.address = address;
         this.phoneNumber = phoneNumber;
-        this.email = email;
     }
 
-    // Getters và Setters
-    public String getName() { return name; }
-    public String getAddress() { return address; }
-    public String getPhoneNumber() { return phoneNumber; }
-    public String getEmail() { return email; }
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
     @Override
     public String toString() {
-        return "Customer: " + name + ", Address: " + address + ", Phone: " + phoneNumber + ", Email: " + email;
+        return "Mã khách hàng: " + id + ", Tên: " + name + ", Số điện thoại: " + phoneNumber;
     }
 }

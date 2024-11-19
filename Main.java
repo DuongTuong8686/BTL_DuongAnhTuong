@@ -1,115 +1,99 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Main {
     public static void main(String[] args) {
-        RoomManager roomManager = new RoomManager();
-        CustomerManager customerManager = new CustomerManager();
-        BookingManager bookingManager = new BookingManager();
-
+        HotelManager hotelManager = new HotelManager();
         Scanner scanner = new Scanner(System.in);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        while (true) {
-            System.out.println("1. Quản lý phòng");
-            System.out.println("2. Quản lý khách hàng");
-            System.out.println("3. Quản lý đặt phòng");
-            System.out.println("4. Thoát");
-
-            int choice;
-            try {
-                choice = scanner.nextInt();
-            } catch (Exception e) {
-                System.out.println("Vui lòng nhập một số hợp lệ.");
-                scanner.nextLine(); // Xóa dòng để tránh vòng lặp vô tận
-                continue;
-            }
+        int choice;
+        do {
+            System.out.println("\nQuản lý khách sạn");
+            System.out.println("1. Thêm khách hàng");
+            System.out.println("2. Thêm phòng");
+            System.out.println("3. Đặt phòng");
+            System.out.println("4. Thanh toán");
+            System.out.println("5. Hiển thị thông tin hiện có");
+            System.out.println("6. Thoát");
+            System.out.print("Vui lòng chọn chức năng (1-6): ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // Xử lý dòng mới sau khi nhập số
 
             switch (choice) {
                 case 1:
-                    System.out.println("1. Thêm phòng");
-                    System.out.println("2. Hiển thị phòng");
-                    int roomChoice = scanner.nextInt();
-                    if (roomChoice == 1) {
-                        System.out.println("Nhập số phòng: ");
-                        int roomNumber = scanner.nextInt();
-                        System.out.println("Nhập loại phòng: ");
-                        String roomType = scanner.next();
-                        System.out.println("Nhập giá phòng: ");
-                        double price = scanner.nextDouble();
-                        roomManager.addRoom(new Room(roomNumber, roomType, price, "Available"));
-                    } else if (roomChoice == 2) {
-                        roomManager.displayAllRooms(); // Đảm bảo gọi phương thức đúng
-                    }
+                    System.out.print("Nhập mã khách hàng: ");
+                    String customerId = scanner.nextLine();
+                    System.out.print("Nhập tên khách hàng: ");
+                    String customerName = scanner.nextLine();
+                    System.out.print("Nhập số điện thoại khách hàng: ");
+                    String customerPhone = scanner.nextLine();
+                    Customer customer = new Customer(customerId, customerName, customerPhone);
+                    hotelManager.addCustomer(customer);
+                    System.out.println("Thêm khách hàng thành công.");
+                    System.out.println("Danh sách khách hàng hiện có:");
+                    hotelManager.displayCustomers();
                     break;
 
                 case 2:
-                    System.out.println("1. Thêm khách hàng");
-                    System.out.println("2. Hiển thị khách hàng");
-                    int customerChoice = scanner.nextInt();
-                    if (customerChoice == 1) {
-                        System.out.println("Nhập tên khách hàng: ");
-                        scanner.nextLine(); // Xóa dòng để đọc tên khách hàng
-                        String name = scanner.nextLine();
-                        System.out.println("Nhập địa chỉ: ");
-                        String address = scanner.nextLine();
-                        System.out.println("Nhập số điện thoại: ");
-                        String phone = scanner.nextLine();
-                        System.out.println("Nhập email: ");
-                        String email = scanner.nextLine();
-                        customerManager.addCustomer(new Customer(name, address, phone, email));
-                    } else if (customerChoice == 2) {
-                        customerManager.displayCustomers();
-                    }
+                    System.out.print("Nhập số phòng: ");
+                    int roomNumber = scanner.nextInt();
+                    scanner.nextLine(); // Xử lý dòng mới
+                    System.out.print("Nhập loại phòng: ");
+                    String roomType = scanner.nextLine();
+                    System.out.print("Nhập giá phòng mỗi đêm: ");
+                    double price = scanner.nextDouble();
+                    Room room = new Room(roomNumber, roomType, price);
+                    hotelManager.addRoom(room);
+                    System.out.println("Thêm phòng thành công.");
+                    System.out.println("Danh sách phòng hiện có:");
+                    hotelManager.displayRooms();
                     break;
 
                 case 3:
-                    System.out.println("1. Đặt phòng");
-                    System.out.println("2. Hiển thị đặt phòng");
-                    int bookingChoice = scanner.nextInt();
-                    if (bookingChoice == 1) {
-                        System.out.println("Nhập số phòng: ");
-                        int roomNumber = scanner.nextInt();
-                        Room room = roomManager.findRoom(roomNumber);
-                        if (room == null || room.isBooked()) {
-                            System.out.println("Phòng không tồn tại hoặc đã được đặt.");
-                        } else {
-                            System.out.println("Nhập tên khách hàng: ");
-                            scanner.nextLine(); // Xóa dòng để đọc tên khách hàng
-                            String customerName = scanner.nextLine();
-                            Customer customer = customerManager.findCustomer(customerName);
-                            if (customer == null) {
-                                System.out.println("Khách hàng không tồn tại.");
-                            } else {
-                                System.out.println("Nhập ngày check-in (dd/MM/yyyy): ");
-                                String checkIn = scanner.next();
-                                System.out.println("Nhập ngày check-out (dd/MM/yyyy): ");
-                                String checkOut = scanner.next();
-                                try {
-                                    Date checkInDate = sdf.parse(checkIn);
-                                    Date checkOutDate = sdf.parse(checkOut);
-                                    bookingManager.addBooking(new Booking(room, customer, checkInDate, checkOutDate));
-                                } catch (Exception e) {
-                                    System.out.println("Định dạng ngày không đúng.");
-                                }
-                            }
-                        }
-                    } else if (bookingChoice == 2) {
-                        bookingManager.displayBookings();
-                    }
+                    System.out.print("Nhập mã khách hàng: ");
+                    String bookingCustomerId = scanner.nextLine();
+                    System.out.print("Nhập số phòng: ");
+                    int bookingRoomNumber = scanner.nextInt();
+                    scanner.nextLine(); // Xử lý dòng mới
+                    System.out.print("Nhập ngày nhận phòng (dd/MM/yyyy): ");
+                    String checkInDateStr = scanner.nextLine();
+                    LocalDate checkInDate = LocalDate.parse(checkInDateStr, dateFormatter);
+                    System.out.print("Nhập ngày trả phòng (dd/MM/yyyy): ");
+                    String checkOutDateStr = scanner.nextLine();
+                    LocalDate checkOutDate = LocalDate.parse(checkOutDateStr, dateFormatter);
+                    hotelManager.bookRoom(bookingCustomerId, bookingRoomNumber, checkInDate, checkOutDate);
+                    System.out.println("Danh sách đặt phòng hiện có:");
+                    hotelManager.displayBookings();
                     break;
 
                 case 4:
+                    System.out.print("Nhập số phòng để thanh toán: ");
+                    int checkoutRoomNumber = scanner.nextInt();
+                    hotelManager.checkout(checkoutRoomNumber);
+                    break;
+
+                case 5:
+                    System.out.println("Hiển thị tất cả thông tin:");
+                    System.out.println("Danh sách khách hàng:");
+                    hotelManager.displayCustomers();
+                    System.out.println("\nDanh sách phòng:");
+                    hotelManager.displayRooms();
+                    System.out.println("\nDanh sách đặt phòng:");
+                    hotelManager.displayBookings();
+                    break;
+
+                case 6:
                     System.out.println("Thoát chương trình.");
-                    scanner.close();
-                    System.exit(0);
                     break;
 
                 default:
                     System.out.println("Lựa chọn không hợp lệ. Vui lòng thử lại.");
             }
-        }
+        } while (choice != 6);
+
+        scanner.close();
     }
 }
 

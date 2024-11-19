@@ -1,32 +1,43 @@
-import java.util.Date;
+
+import java.time.LocalDate;
 
 public class Booking {
-    private Room room;
     private Customer customer;
-    private Date checkInDate;
-    private Date checkOutDate;
+    private Room room;
+    private LocalDate checkInDate;
+    private LocalDate checkOutDate;
 
-    public Booking(Room room, Customer customer, Date checkInDate, Date checkOutDate) {
-        this.room = room;
+    public Booking(Customer customer, Room room, LocalDate checkInDate, LocalDate checkOutDate) {
         this.customer = customer;
+        this.room = room;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
-        room.setStatus("Đã có"); // Đặt trạng thái phòng là Đã có khách
     }
 
-    // Getters
-    public Room getRoom() { return room; }
-    public Customer getCustomer() { return customer; }
-    public Date getCheckInDate() { return checkInDate; }
-    public Date getCheckOutDate() { return checkOutDate; }
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public LocalDate getCheckInDate() {
+        return checkInDate;
+    }
+
+    public LocalDate getCheckOutDate() {
+        return checkOutDate;
+    }
+
+    public double calculateTotalPrice() {
+        long days = checkInDate.until(checkOutDate).getDays();
+        return days * room.getPricePerNight();
+    }
 
     @Override
     public String toString() {
-        return "Booking: Room " + room.getRoomNumber() + ", Customer: " + customer.getName() +
-                ", Check-in: " + checkInDate + ", Check-out: " + checkOutDate;
-    }
-
-    public void cancelBooking() {
-        room.setStatus("Trống"); // Đặt lại trạng thái phòng là trống
+        return "Đặt phòng [Khách hàng: " + customer.getName() + ", Phòng: " + room.getRoomNumber() + ", Ngày nhận phòng: " + checkInDate + ", Ngày trả phòng: " + checkOutDate + "]";
     }
 }
+
